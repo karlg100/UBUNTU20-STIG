@@ -1,5 +1,11 @@
 ---
 
+- name: Reset audit rule selection
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: false
+  tags:
+      - always
+
 - name: "MEDIUM | UBTU-20-010000 | AUDIT | The Ubuntu operating system must provision temporary user accounts with an expiration time of 72 hours or less."
   block:
       - name: "MEDIUM | UBTU-20-010000 | PATCH | The Ubuntu operating system must provision temporary user accounts with an expiration time of 72 hours or less. | Set Accounts To 72 Hour Terminate."
@@ -839,10 +845,8 @@
       - aide
 
 - name: "MEDIUM | UBTU-20-010100 | PATCH |  The Ubuntu operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010100
   tags:
@@ -860,10 +864,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010101 | PATCH | The Ubuntu operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/group."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010101
   tags:
@@ -881,10 +883,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010102 | PATCH | The Ubuntu operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/shadow."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010102
   tags:
@@ -902,10 +902,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010103 | PATCH | The Ubuntu operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010103
   tags:
@@ -922,10 +920,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010104 | PATCH | The Ubuntu operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/opasswd."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010104
   tags:
@@ -1147,10 +1143,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010136 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the su command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010136
   tags:
@@ -1163,10 +1157,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010137 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the chfn command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010137
   tags:
@@ -1179,10 +1171,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010138 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the mount command"
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010138
   tags:
@@ -1195,10 +1185,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010139 | PATCH |  The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the umount command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010139
   tags:
@@ -1211,10 +1199,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010140 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the ssh-agent command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010140
   tags:
@@ -1227,10 +1213,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010141 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the ssh-keysign command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010141
   tags:
@@ -1243,10 +1227,8 @@
       - aduitd
 
 - name: "MEDIUM | UBTU-20-010142 | PATCH | The Ubuntu operating system must generate audit records for any use of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010142
   tags:
@@ -1259,10 +1241,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010148 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the chown, fchown, fchownat, and lchown system calls."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010148
   tags:
@@ -1275,10 +1255,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010152 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the chmod, fchmod, and fchmodat system calls."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010152
   tags:
@@ -1291,10 +1269,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010155 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the creat, open, openat, open_by_handle_at, truncate, and ftruncate system calls."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010155
   tags:
@@ -1307,10 +1283,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010161 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the sudo command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010161
   tags:
@@ -1323,10 +1297,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010162 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the sudoedit command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010162
   tags:
@@ -1339,10 +1311,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010163 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the chsh command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010163
   tags:
@@ -1355,10 +1325,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010164 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the newgrp command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010164
   tags:
@@ -1371,10 +1339,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010165 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the chcon command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010165
   tags:
@@ -1387,10 +1353,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010166 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the apparmor_parser command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010166
   tags:
@@ -1403,10 +1367,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010167 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the setfacl command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010167
   tags:
@@ -1419,10 +1381,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010168 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the chacl command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010168
   tags:
@@ -1435,10 +1395,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010169 | PATCH | The Ubuntu operating system must generate audit records for the use and modification of the tallylog file."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010169
   tags:
@@ -1451,10 +1409,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010170 | PATCH | The Ubuntu operating system must generate audit records for the use and modification of faillog file."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc//99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010170
   tags:
@@ -1467,10 +1423,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010171 | PATCH | The Ubuntu operating system must generate audit records for the use and modification of the lastlog file."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010171
   tags:
@@ -1483,10 +1437,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010172 | PATCH |  The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the passwd command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010172
   tags:
@@ -1499,10 +1451,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010173 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the unix_update command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010173
   tags:
@@ -1515,10 +1465,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010174 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the gpasswd command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010174
   tags:
@@ -1531,10 +1479,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010175 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the chage command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010175
   tags:
@@ -1547,10 +1493,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010176 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the usermod command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010176
   tags:
@@ -1563,10 +1507,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010177 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the crontab command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010177
   tags:
@@ -1579,10 +1521,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010178 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the pam_timestamp_check command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010178
   tags:
@@ -1595,10 +1535,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010179 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the init_module and finit_module syscalls."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010179
   tags:
@@ -1611,10 +1549,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010181 | PATCH | The Ubuntu operating system must generate audit records for successful/unsuccessful uses of the delete_module syscall."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010181
   tags:
@@ -1793,10 +1729,8 @@
       - aide
 
 - name: "MEDIUM | UBTU-20-010211 | PATCH | The Ubuntu operating system must prevent all software from executing at higher privilege levels than users executing the software and the audit system must be configured to audit the execution of privileged functions."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010211
   tags:
@@ -1810,10 +1744,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010244 | PATCH | The Ubuntu operating system must generate audit records for privileged activities, nonlocal maintenance, diagnostic sessions and other system-level access."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010244
   tags:
@@ -1827,10 +1759,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010267 | PATCH |  The Ubuntu operating system must generate audit records for any successful/unsuccessful use of unlink, unlinkat, rename, renameat, and rmdir system calls."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010267
   tags:
@@ -1843,10 +1773,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010277 | PATCH |  The Ubuntu operating system must generate audit records for the /var/log/wtmp file."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010277
   tags:
@@ -1859,10 +1787,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010278 | PATCH | The Ubuntu operating system must generate audit records for the /var/run/utmp file."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010278
   tags:
@@ -1875,10 +1801,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010279 | PATCH | The Ubuntu operating system must generate audit records for the /var/log/btmp file."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010279
   tags:
@@ -1891,10 +1815,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010296 | PATCH | The Ubuntu operating system must generate audit records when successful/unsuccessful attempts to use modprobe command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010296
   tags:
@@ -1907,10 +1829,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010297 | PATCH | The Ubuntu operating system must generate audit records when successful/unsuccessful attempts to use the kmod command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010297
   tags:
@@ -1923,10 +1843,8 @@
       - auditd
 
 - name: "MEDIUM | UBTU-20-010298 | PATCH | The Ubuntu operating system must generate audit records when successful/unsuccessful attempts to use the fdisk command."
-  ansible.builtin.debug:
-      msg: "Control being set via Handler 'update auditd' which writes to /etc/audit.d/99_stig_auditd.rules"
-  changed_when: true
-  notify: update auditd
+  ansible.builtin.set_fact:
+      ubtu20stig_audit_rules_requested: true
   when:
       - ubtu_20_010298
   tags:
@@ -3105,3 +3023,18 @@
       - SV-255912r880905_rule
       - V-255912
       - sshd
+
+- name: Apply selected audit rules
+  ansible.builtin.template:
+      src: audit/99_stig_auditd.rules.j2
+      dest: /etc/audit/rules.d/99_stig_audit.rules
+      owner: root
+      group: root
+      mode: '0640'
+  notify:
+      - reload auditd
+      - restart auditd
+  when:
+      - ubtu20stig_audit_rules_requested
+  tags:
+      - always
