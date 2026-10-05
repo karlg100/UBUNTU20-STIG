@@ -31,7 +31,7 @@ Check Mode is not supported! The role will complete in check mode without errors
 
 This role was developed against a clean install of the Ubuntu 20 operating system. If you are implementing to an existing system please review this role for any site specific changes that are needed.
 
-Community fixes land in this fork's [devel branch](https://github.com/karlg100/UBUNTU20-STIG/tree/devel). No community release has been published yet. Use a reviewed commit from this repository when pinning a deployment.
+Community fixes land in this fork's [devel branch](https://github.com/karlg100/UBUNTU20-STIG/tree/devel). See [releases](https://github.com/karlg100/UBUNTU20-STIG/releases) for published versions. Use a reviewed commit from this repository when pinning a deployment.
 
 ---
 
@@ -64,7 +64,7 @@ Currently this release does not have a auditing tool.
 - [Role variables and customization](#role-variables), with available settings in [defaults/main.yml](defaults/main.yml)
 - [Control selection with tags](#tags)
 - [Contributing changes](#community-contribution)
-- [Maintenance status](#maintenance-status)
+- [Issues](https://github.com/karlg100/UBUNTU20-STIG/issues) and [pull requests](https://github.com/karlg100/UBUNTU20-STIG/pulls)
 - [Change history](ChangeLog.md)
 
 ## Requirements
@@ -119,19 +119,6 @@ Contributions to this community fork are welcome.
 - GPG-sign and sign off commits intended for merge.
 - Link the relevant fork issue and describe the problem, fix, and validation performed.
 - Record the checks that passed and any test-system validation still pending. For behavior changes, include an appropriate functional test and repeat-run results when available.
-- Community releases will be documented separately when available.
-
-## Maintenance status
-
-| Issue | Work | Status | Commit / branch |
-|---|---|---|---|
-| [#1](https://github.com/karlg100/UBUNTU20-STIG/issues/1) | Honor the PAM control disable flag | Open; proposed fix | Pending |
-| [#2](https://github.com/karlg100/UBUNTU20-STIG/issues/2) | Gate reboot on actual need | Open; proposed fix | Pending |
-| [#3](https://github.com/karlg100/UBUNTU20-STIG/issues/3) | Report audit-rule changes accurately | Merged in [PR #6](https://github.com/karlg100/UBUNTU20-STIG/pull/6); manual test-system results pending | [2c10d88e](https://github.com/karlg100/UBUNTU20-STIG/commit/2c10d88ea3779b1b9e9dd5605ddcf5aeb63cc21b) on [fix/68-audit-rule-idempotence](https://github.com/karlg100/UBUNTU20-STIG/tree/fix/68-audit-rule-idempotence) |
-| [#4](https://github.com/karlg100/UBUNTU20-STIG/issues/4) | Add a configurable two-hour APT cache interval | Open; proposed fix | Pending |
-| [#5](https://github.com/karlg100/UBUNTU20-STIG/issues/5) | Investigate repeated audit-log metadata repairs | Open; producer of metadata changes unconfirmed | Pending |
-
-The audit fix is included in `devel` through merge commit [f30d7eb7](https://github.com/karlg100/UBUNTU20-STIG/commit/f30d7eb76074b25494a06c68588c79760d669b30). Its isolated regressions, syntax checks, and targeted lint passed; these checks do not replace testing on an Ubuntu 20.04 system.
 
 ## Testing
 
