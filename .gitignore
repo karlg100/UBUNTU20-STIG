@@ -11,8 +11,6 @@ packer_cache
 delete*
 ignore*
 test_inv
-# temp remove doc while this is built up
-doc/
 # VSCode
 .vscode
 
@@ -39,13 +37,12 @@ tramp
 rh-creds.env
 travis.env
 
-# Lockdown-specific
+# Generated benchmark artifacts
 benchparse/
 *xccdf.xml
-*.retry
-
-# GitHub Action/Workflow files
-.github/
 
 # Precommit exclusions
 .ansible/
+
+# Local CI environment
+/.venv/
