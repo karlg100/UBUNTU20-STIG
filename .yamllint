@@ -5,7 +5,10 @@ extends: default
 ignore: |
     tests/
     molecule/
-    .github/
+    .git/
+    .ansible/
+    .cache/
+    .venv/
     .gitlab-ci.yml
     *molecule.yml
 
