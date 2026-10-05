@@ -1,4 +1,8 @@
-# Ubuntu 20.04 DISA STIG
+# Ubuntu 20.04 DISA STIG — Community Fork
+
+This repository is a community-maintained fork of [ansible-lockdown/UBUNTU20-STIG](https://github.com/ansible-lockdown/UBUNTU20-STIG). MindPoint Group no longer maintains the Ubuntu 20.04 role. Maintenance and contributions continue independently in [karlg100/UBUNTU20-STIG](https://github.com/karlg100/UBUNTU20-STIG).
+
+The original work by MindPoint Group / Ansible Lockdown and its contributors remains credited. The [MIT license and original copyright notice](LICENSE) are preserved.
 
 ## Configure a Ubuntu 20.04 system to be [DISA STIG](https://public.cyber.mil/stigs/downloads/) compliant.
 
@@ -6,40 +10,16 @@
 
 ---
 
-![Org Stars](https://img.shields.io/github/stars/ansible-lockdown?label=Org%20Stars&style=social)
-![Stars](https://img.shields.io/github/stars/ansible-lockdown/ubuntu20-stig?label=Repo%20Stars&style=social)
-![Forks](https://img.shields.io/github/forks/ansible-lockdown/ubuntu20-stig?style=social)
-![followers](https://img.shields.io/github/followers/ansible-lockdown?style=social)
-[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/AnsibleLockdown.svg?style=social&label=Follow%20%40AnsibleLockdown)](https://twitter.com/AnsibleLockdown)
-
-![Discord Badge](https://img.shields.io/discord/925818806838919229?logo=discord)
-
-![Release Branch](https://img.shields.io/badge/Release%20Branch-Main-brightgreen)
-![Release Tag](https://img.shields.io/github/v/release/ansible-lockdown/UBUNTU20-STIG)
-![Release Date](https://img.shields.io/github/release-date/ansible-lockdown/UBUNTU20-STIG)
-
-[![Main Pipeline Status](https://github.com/ansible-lockdown/UBUNTU20-STIG/actions/workflows/main_pipeline_validation.yml/badge.svg?)](https://github.com/ansible-lockdown/UBUNTU20-STIG/actions/workflows/main_pipeline_validation.yml)
-
-[![Devel Pipeline Status](https://github.com/ansible-lockdown/UBUNTU20-STIG/actions/workflows/devel_pipeline_validation.yml/badge.svg?)](https://github.com/ansible-lockdown/UBUNTU20-STIG/actions/workflows/devel_pipeline_validation.yml)
-![Devel Commits](https://img.shields.io/github/commit-activity/m/ansible-lockdown/UBUNTU20-STIG/devel?color=dark%20green&label=Devel%20Branch%20Commits)
-
-![Issues Open](https://img.shields.io/github/issues-raw/ansible-lockdown/UBUNTU20-STIG?label=Open%20Issues)
-![Issues Closed](https://img.shields.io/github/issues-closed-raw/ansible-lockdown/UBUNTU20-STIG?label=Closed%20Issues&&color=success)
-![Pull Requests](https://img.shields.io/github/issues-pr/ansible-lockdown/UBUNTU20-STIG?label=Pull%20Requests)
-
-![License](https://img.shields.io/github/license/ansible-lockdown/UBUNTU20-STIG?label=License)
+[![Stars](https://img.shields.io/github/stars/karlg100/UBUNTU20-STIG?label=Repo%20Stars&style=social)](https://github.com/karlg100/UBUNTU20-STIG)
+[![Issues Open](https://img.shields.io/github/issues-raw/karlg100/UBUNTU20-STIG?label=Open%20Issues)](https://github.com/karlg100/UBUNTU20-STIG/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/karlg100/UBUNTU20-STIG?label=Pull%20Requests)](https://github.com/karlg100/UBUNTU20-STIG/pulls)
+[![License](https://img.shields.io/github/license/karlg100/UBUNTU20-STIG?label=License)](LICENSE)
 
 ---
 
-## Looking for support?
+## Community support
 
-[Lockdown Enterprise](https://www.lockdownenterprise.com#GH_AL_UBUNTU20_stig)
-
-[Ansible support](https://www.mindpointgroup.com/cybersecurity-products/ansible-counselor#GH_AL_UBUNTU20_stig)
-
-### Community
-
-Join us on our [Discord Server](https://www.lockdownenterprise.com/discord) to ask questions, discuss features, or just chat with other Ansible-Lockdown users.
+Use [this repository's issues](https://github.com/karlg100/UBUNTU20-STIG/issues) for questions, bug reports, and feature requests. Submit proposed changes as [pull requests](https://github.com/karlg100/UBUNTU20-STIG/pulls) targeting this repository's `devel` branch. See [SUPPORT.md](SUPPORT.md) for reporting and contribution guidance.
 
 ---
 
@@ -51,7 +31,7 @@ Check Mode is not supported! The role will complete in check mode without errors
 
 This role was developed against a clean install of the Ubuntu 20 operating system. If you are implementing to an existing system please review this role for any site specific changes that are needed.
 
-To use release version please point to main branch and relevant release for the stig benchmark you wish to work with.
+Community fixes land in this fork's [devel branch](https://github.com/karlg100/UBUNTU20-STIG/tree/devel). No community release has been published yet. Use a reviewed commit from this repository when pinning a deployment.
 
 ---
 
@@ -79,11 +59,13 @@ Currently this release does not have a auditing tool.
 
 ## Documentation
 
-- [Read The Docs](https://ansible-lockdown.readthedocs.io/en/latest/)
-- [Getting Started](https://www.lockdownenterprise.com/docs/getting-started-with-lockdown#GH_AL_UBUNTU20_stig)
-- [Customizing Roles](https://www.lockdownenterprise.com/docs/customizing-lockdown-enterprise#GH_AL_UBUNTU20_stig)
-- [Per-Host Configuration](https://www.lockdownenterprise.com/docs/per-host-lockdown-enterprise-configuration#GH_AL_UBUNTU20_stig)
-- [Getting the Most Out of the Role](https://www.lockdownenterprise.com/docs/get-the-most-out-of-lockdown-enterprise#GH_AL_UBUNTU20_stig)
+- [Community support and reporting problems](SUPPORT.md)
+- [Requirements](#requirements)
+- [Role variables and customization](#role-variables), with available settings in [defaults/main.yml](defaults/main.yml)
+- [Control selection with tags](#tags)
+- [Contributing changes](#community-contribution)
+- [Maintenance status](#maintenance-status)
+- [Change history](ChangeLog.md)
 
 ## Requirements
 
@@ -131,21 +113,31 @@ tags:
 
 ## Community Contribution
 
-We encourage you (the community) to contribute to this role. Please read the rules below.
+Contributions to this community fork are welcome.
 
-- Your work is done in your own individual branch. Make sure to Signed-off and GPG sign all commits you intend to merge.
-- All community Pull Requests are pulled into the devel branch.
-- Pull Requests into devel will confirm your commits have a GPG signature, Signed-off, and a functional test before being approved.
-- Once your changes are merged and a more detailed review is complete, an authorized member will merge your changes into the main branch for a new release.
+- Work in a separate branch and submit pull requests to `karlg100/UBUNTU20-STIG:devel`.
+- GPG-sign and sign off commits intended for merge.
+- Link the relevant fork issue and describe the problem, fix, and validation performed.
+- Record the checks that passed and any test-system validation still pending. For behavior changes, include an appropriate functional test and repeat-run results when available.
+- Community releases will be documented separately when available.
 
-## Pipeline Testing
+## Maintenance status
 
-uses:
+| Issue | Work | Status | Commit / branch |
+|---|---|---|---|
+| [#1](https://github.com/karlg100/UBUNTU20-STIG/issues/1) | Honor the PAM control disable flag | Open; proposed fix | Pending |
+| [#2](https://github.com/karlg100/UBUNTU20-STIG/issues/2) | Gate reboot on actual need | Open; proposed fix | Pending |
+| [#3](https://github.com/karlg100/UBUNTU20-STIG/issues/3) | Report audit-rule changes accurately | Merged in [PR #6](https://github.com/karlg100/UBUNTU20-STIG/pull/6); manual test-system results pending | [2c10d88e](https://github.com/karlg100/UBUNTU20-STIG/commit/2c10d88ea3779b1b9e9dd5605ddcf5aeb63cc21b) on [fix/68-audit-rule-idempotence](https://github.com/karlg100/UBUNTU20-STIG/tree/fix/68-audit-rule-idempotence) |
+| [#4](https://github.com/karlg100/UBUNTU20-STIG/issues/4) | Add a configurable two-hour APT cache interval | Open; proposed fix | Pending |
+| [#5](https://github.com/karlg100/UBUNTU20-STIG/issues/5) | Investigate repeated audit-log metadata repairs | Open; producer of metadata changes unconfirmed | Pending |
 
-- ansible-core 2.12
-- ansible collections - pulls in the latest version based on requirements file
-- runs the audit using the devel branch
-- This is an automated test that occurs on pull requests into devel
+The audit fix is included in `devel` through merge commit [f30d7eb7](https://github.com/karlg100/UBUNTU20-STIG/commit/f30d7eb76074b25494a06c68588c79760d669b30). Its isolated regressions, syntax checks, and targeted lint passed; these checks do not replace testing on an Ubuntu 20.04 system.
+
+## Testing
+
+The inherited GitHub workflows refer to the original project's self-hosted runner and AWS test infrastructure. Their presence does not establish that this fork has run those pipelines. Check each pull request for its actual validation results.
+
+For role changes, document syntax and lint checks, relevant isolated regression checks, and manual convergence/idempotence results from an Ubuntu 20.04 test system. Clearly identify checks that remain pending.
 
 ## Added Extras
 
