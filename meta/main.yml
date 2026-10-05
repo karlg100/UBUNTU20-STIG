@@ -22,7 +22,7 @@ galaxy_info:
         - ubuntu
         - complianceascode
         - disa
-        - ubuntu18
+        - ubuntu20
 collections:
     - community.general
     - community.crypto

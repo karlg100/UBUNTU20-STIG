@@ -1,6 +1,6 @@
 ---
-##### CI for use by github no need for action to be added
-##### Inherited
+# Optional pre-commit.ci service settings.
+# GitHub Actions checks are defined separately in .github/workflows/ci.yml.
 ci:
     autofix_prs: false
     skip: [detect-aws-credentials, ansible-lint ]

@@ -16,4 +16,4 @@ Share only the relevant, sanitized output. Remove credentials, private keys, tok
 
 ## Contributing a fix
 
-Use a separate branch, GPG-sign and sign off your commits, and describe the validation performed in the pull request. State which checks passed and which test-system checks remain pending. See the [README contribution guidance](README.md#community-contribution) and the [issue tracker](https://github.com/karlg100/UBUNTU20-STIG/issues) for current work.
+Use a separate branch, GPG-sign and sign off your commits, and describe the validation performed in the pull request. State which checks passed and which test-system checks remain pending. See the [contributor guide](CONTRIBUTING.rst) and the [issue tracker](https://github.com/karlg100/UBUNTU20-STIG/issues) for current work.

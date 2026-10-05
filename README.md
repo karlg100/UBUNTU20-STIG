@@ -4,7 +4,7 @@ This repository is a community-maintained fork of [ansible-lockdown/UBUNTU20-STI
 
 The original work by MindPoint Group / Ansible Lockdown and its contributors remains credited. The [MIT license and original copyright notice](LICENSE) are preserved.
 
-## Configure a Ubuntu 20.04 system to be [DISA STIG](https://public.cyber.mil/stigs/downloads/) compliant.
+## Remediate Ubuntu 20.04 against the [DISA STIG](https://public.cyber.mil/stigs/downloads/)
 
 ### Based on [ Ubuntu 20.04 DISA STIG Version 1, Rel 7 released on Jan 26, 2023 ](https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CAN_Ubuntu_20-04_LTS_V1R7_STIG.zip)
 
@@ -27,7 +27,7 @@ Use [this repository's issues](https://github.com/karlg100/UBUNTU20-STIG/issues)
 
 This role **will make changes to the system** which may have unintended consequences. This is not an auditing tool but rather a remediation tool to be used after an audit has been conducted.
 
-Check Mode is not supported! The role will complete in check mode without errors, but it is not supported and should be used with caution.
+Full-role check mode is not supported and is not a substitute for testing remediation on an Ubuntu 20.04 test system.
 
 This role was developed against a clean install of the Ubuntu 20 operating system. If you are implementing to an existing system please review this role for any site specific changes that are needed.
 
@@ -35,27 +35,19 @@ Community fixes land in this fork's [devel branch](https://github.com/karlg100/U
 
 ---
 
-## Matching a security Level for STIG
+## Selecting STIG categories
 
-It is possible to to only run controls that are based on a particular for security level for STIG.
-This is managed using tags:
+The category switches `ubtu20stig_cat1_patch`, `ubtu20stig_cat2_patch`, and `ubtu20stig_cat3_patch` enable CAT I, CAT II, and CAT III tasks. All three default to `true`. Use these switches to select categories while retaining the role's supporting tasks. Individual control switches and task conditions also apply; review [defaults/main.yml](defaults/main.yml) for the complete configuration.
 
-- CAT1
-- CAT2
-- CAT3
+The category imports also provide the case-sensitive tags `cat1`, `cat2`, and `cat3`. Individual tasks may carry uppercase category tags, but those are not consistent selectors for an entire category. Selecting tags can omit prerequisite tasks, so validate the selected task sequence before applying it.
 
-The control found in defaults main also need to reflect true so as this will allow the controls to run when the playbook is launched.
+## Updating an existing deployment
 
-## Coming from a previous release
+Review the [changelog](ChangeLog.md), changed tasks, and variable defaults before adopting another revision. Validate the chosen role and dependency versions on a representative test system, including a repeat run with the same inputs.
 
-STIG releases always contain changes, it is highly recommended to review the new references and available variables. This has changed significantly since the initial release of ansible-lockdown.
-This is now compatible with python3 if it is found to be the default interpreter. This does come with pre-requisites which it configures the system accordingly.
+## Auditing
 
-Further details can be seen in the [Changelog](./ChangeLog.md)
-
-## Auditing (new)
-
-Currently this release does not have a auditing tool.
+This role performs remediation and includes manual-review warnings. It does not include an OpenSCAP report workflow or a standalone compliance scanner. Validate compliance separately against the benchmark used by your organization.
 
 ## Documentation
 
@@ -69,38 +61,24 @@ Currently this release does not have a auditing tool.
 
 ## Requirements
 
-**General:**
+- An Ubuntu 20.04 target. The role asserts the Ubuntu distribution and major version; it has no `skip_os_check` override.
+- An Ansible controller, an inventory, connectivity to the target, and privilege escalation for remediation. See the official [installation guide](https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html) and [getting-started guide](https://docs.ansible.com/projects/ansible/latest/getting_started/index.html).
+- Python versions supported by your chosen Ansible and collection versions on the controller and target. The inherited role minimum in [metadata](meta/main.yml) and [the version assertion](vars/main.yml) is 2.10.1; this is not a tested compatibility matrix for every later release.
+- The `community.general`, `community.crypto`, and `ansible.posix` collections declared in [meta/main.yml](meta/main.yml). See [Distribution](#distribution) for installation and [Testing](#testing) for the separate static-check environment.
 
-- Basic knowledge of Ansible, below are some links to the Ansible documentation to help get started if you are unfamiliar with Ansible
-
-  - [Main Ansible documentation page](https://docs.ansible.com)
-  - [Ansible Getting Started](https://docs.ansible.com/ansible/latest/user_guide/intro_getting_started.html)
-  - [Tower User Guide](https://docs.ansible.com/ansible-tower/latest/html/userguide/index.html)
-  - [Ansible Community Info](https://docs.ansible.com/ansible/latest/community/index.html)
-- Functioning Ansible and/or Tower Installed, configured, and running. This includes all of the base Ansible/Tower configurations, needed packages installed, and infrastructure setup.
-- Please read through the tasks in this role to gain an understanding of what each control is doing. Some of the tasks are disruptive and can have unintended consiquences in a live production system. Also familiarize yourself with the variables in the defaults/main.yml file.
-
-**Technical Dependencies:**
-
-- Ubuntu 20 - Other versions are not supported.
-- Other OSs can be checked by changing the skip_os_check to true for testing purposes.
-- python2-passlib (or just passlib, if using python3)
-- python-lxml
-- python-xmltodict
-
-Package 'python-xmltodict' is required if you enable the OpenSCAP tool installation and run a report. Packages python(2)-passlib are required for tasks with custom filters or modules. These are all required on the controller host that executes Ansible.
+Review the tasks and site-specific settings before applying the role. Authentication, networking, packages, and reboot behavior can affect access to an existing system.
 
 ## Role Variables
 
-This role is designed that the end user should not have to edit the tasks themselves. All customizing should be done via the defaults/main.yml file or with extra vars within the project, job, workflow, etc. Non-disruptive CAT I, CAT II, and CAT III findings will be corrected by default. Disruptive finding remediation can be enabled by setting `ubtu20stig_disruption_high` to `true`.
+Use [defaults/main.yml](defaults/main.yml) as the configuration reference. Override values in inventory, `group_vars`, `host_vars`, or play variables so deployment settings stay separate from role source changes. Review individual control switches as well as the category switches; enabling a category does not make every control automatic. `ubtu20stig_disruption_high` defaults to `false` and enables tasks gated by that setting when changed to `true`.
 
 ## Tags
 
-There are many tags available for added control precision. Each control may have it's own set of tags noting what level, if it's scored/notscored, what OS element it relates to, if it's a patch or audit, and the rule number.
+Control tasks carry tags for STIG identifiers, severity, and the affected system component. Tags are case-sensitive and do not override task conditions. Use `ansible-playbook --list-tasks --tags <tag> -i <inventory> site.yml` to inspect the selected tasks before execution.
 
 Below is an example of the tag section from a control within this role. Using this example if you set your run to skip all controls with the tag CCI-002824, this task will be skipped. The opposite can also happen where you run only controls tagged with CCI-002824.
 
-```sh
+```yaml
 tags:
       - UBTU-20-010448
       - CAT2
@@ -113,7 +91,7 @@ tags:
 
 ## Community Contribution
 
-Contributions to this community fork are welcome.
+Contributions to this community fork are welcome. See [CONTRIBUTING.rst](CONTRIBUTING.rst) for the workflow and Developer's Certificate of Origin.
 
 - Work in a separate branch and submit pull requests to `karlg100/UBUNTU20-STIG:devel`.
 - GPG-sign and sign off commits intended for merge.
@@ -126,12 +104,14 @@ Contributions to this community fork are welcome.
 
 CI validates the source without running remediation. Convergence, audit service behavior, reboot handling, and idempotence still require manual testing on an Ubuntu 20.04 system. Record completed checks and any pending test-system validation in each PR.
 
-To reproduce the Python-based checks with Python 3.12:
+From the repository root, reproduce the Python-based checks with Python 3.12:
 
 ```sh
-python3 -m venv .venv
+python3.12 -m venv .venv
 . .venv/bin/activate
 python -m pip install -r .ci/requirements.txt
+export ANSIBLE_COLLECTIONS_PATH="$PWD/.ansible/collections"
+export ANSIBLE_LOCAL_TEMP="$PWD/.ansible/tmp"
 ansible-galaxy collection install -r .ci/collections.yml
 yamllint --strict .
 ansible-playbook --syntax-check -i localhost, site.yml
@@ -152,12 +132,22 @@ roles:
     version: devel
 ```
 
-Run `ansible-galaxy role install -r requirements.yml`. The metadata identifies this fork as `karlg100.ubuntu20_stig`; that does not imply it has been published to Galaxy. The inherited automatic Galaxy publishing workflow has been removed. Any future Galaxy publication requires a verified community-owned namespace and an explicitly configured release process.
-
-## Added Extras
-
-- [pre-commit](https://pre-commit.com) can be tested and can be run from within the directory
+Run `ansible-galaxy role install -r requirements.yml`. Install the required collections separately; see the official [collection installation guide](https://docs.ansible.com/projects/ansible/latest/collections_guide/collections_installing.html). From a checkout of this role, the inherited collection manifest can be installed with:
 
 ```sh
-pre-commit run
+ansible-galaxy collection install -r collections/requirements.yml
 ```
+
+That manifest uses public collection Git repositories without version pins. For repeatable deployments, use your own collection requirements file with versions validated on your Ubuntu 20.04 test system. The pins in `.ci/collections.yml` define static CI checks and do not establish runtime compatibility.
+
+The metadata identifies this fork as `karlg100.ubuntu20_stig`; that does not imply it has been published to Galaxy. The inherited automatic Galaxy publishing workflow has been removed. Any future Galaxy publication requires a verified community-owned namespace and an explicitly configured release process.
+
+## Optional local hooks
+
+After installing [pre-commit](https://pre-commit.com), run the configured hooks from the repository root:
+
+```sh
+pre-commit run --all-files
+```
+
+These include additional secret and formatting checks. They are separate from the checks run by Community CI.
