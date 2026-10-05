@@ -1,26 +1,37 @@
-Contributing to MindPoint Group Projects
-========================================
+Contributing to the Ubuntu 20.04 STIG Community Fork
+====================================================
+
+Use this repository's `issues <https://github.com/karlg100/UBUNTU20-STIG/issues>`_
+for questions, bug reports, and feature requests. Submit pull requests to
+``karlg100/UBUNTU20-STIG:devel``. Contributions are maintained here independently
+of MindPoint Group; no upstream staging branch or infrastructure is required.
 
 Rules
 -----
-1) All commits must be GPG signed (details in Signing section)
-2) All commits must have Signed-off-by (Signed-off-by: Joan Doe <joan.doe@email.com>) in the commit message (details in Signing section)
-3) All work is done in your own branch
-4) All pull requests go into the devel branch. There are automated checks for signed commits, signoff in commit message, and functional testing)
-5) Be open and nice to eachother
+1) GPG-sign all commits intended for merge.
+2) Include a Signed-off-by trailer in each contribution commit.
+3) Work in a separate branch and link the relevant fork issue.
+4) Record completed validation and any test-system checks still pending.
+5) Be respectful of other contributors.
 
 Workflow
 --------
-- Your work is done in your own individual branch. Make sure to to Signed-off and GPG sign all commits you intend to merge
-- All community Pull Requests are into the devel branch. There are automated checks for GPG signed, Signed-off in commits, and functional tests before being approved. If your pull request comes in from outside of our repo, the pull request will go into a staging branch. There is info needed from our repo for our CI/CD testing.
-- Once your changes are merged and a more detailed review is complete, an authorized member will merge your changes into the main branch for a new release
+The community CI workflow runs YAML lint, GitHub Actions validation, Ansible
+syntax checks, and Ansible lint on GitHub-hosted runners. It uses read-only
+repository permissions and does not run remediation or provision test systems.
+
+Commit signatures and sign-off are reviewed by maintainers; the workflow does
+not claim to enforce them. Functional convergence and idempotence must be
+validated separately on an Ubuntu 20.04 test system. Include those results, or
+clearly mark them pending, in the pull request. See `README.md <README.md#testing>`_
+for the local validation commands.
 
 Signing your contribution
 -------------------------
 
 We've chosen to use the Developer's Certificate of Origin (DCO) method
 that is employed by the Linux Kernel Project, which provides a simple
-way to contribute to MindPoint Group projects.
+way to contribute to this community fork.
 
 The process is to certify the below DCO 1.1 text
 ::
@@ -64,3 +75,5 @@ following text in your contribution commit message:
 This message can be entered manually, or if you have configured git
 with the correct `user.name` and `user.email`, you can use the `-s`
 option to `git commit` to automatically include the signoff message.
+
+Use ``git commit -S -s`` to sign the commit and add the sign-off trailer.

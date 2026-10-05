@@ -44,8 +44,8 @@ benchparse/
 *xccdf.xml
 *.retry
 
-# GitHub Action/Workflow files
-.github/
-
 # Precommit exclusions
 .ansible/
+
+# Local CI environment
+/.venv/

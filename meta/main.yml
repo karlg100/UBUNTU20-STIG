@@ -2,11 +2,11 @@
 
 galaxy_info:
     author: "Stephen Williams, George Nalen, Mark Bolwell"
-    description: "Apply the DISA Ubuntu 20 STIG"
-    company: "MindPoint Group"
+    description: "Community-maintained fork of the DISA Ubuntu 20 STIG role"
+    company: "Community contributors"
     license: MIT
     role_name: ubuntu20_stig
-    namespace: mindpointgroup
+    namespace: karlg100
     min_ansible_version: 2.10.1
     platforms:
         - name: Ubuntu

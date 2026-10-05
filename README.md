@@ -63,7 +63,7 @@ Currently this release does not have a auditing tool.
 - [Requirements](#requirements)
 - [Role variables and customization](#role-variables), with available settings in [defaults/main.yml](defaults/main.yml)
 - [Control selection with tags](#tags)
-- [Contributing changes](#community-contribution)
+- [Contributing changes](CONTRIBUTING.rst)
 - [Issues](https://github.com/karlg100/UBUNTU20-STIG/issues) and [pull requests](https://github.com/karlg100/UBUNTU20-STIG/pulls)
 - [Change history](ChangeLog.md)
 
@@ -122,9 +122,37 @@ Contributions to this community fork are welcome.
 
 ## Testing
 
-The inherited GitHub workflows refer to the original project's self-hosted runner and AWS test infrastructure. Their presence does not establish that this fork has run those pipelines. Check each pull request for its actual validation results.
+[Community CI](.github/workflows/ci.yml) runs on pull requests and pushes to `devel` and `main`, and can be started manually. It runs YAML lint (including workflows), GitHub Actions validation with actionlint, an Ansible syntax check, and Ansible lint on a GitHub-hosted Ubuntu runner. It uses read-only repository permissions and requires no AWS credentials, private infrastructure repository, or self-hosted runner.
 
-For role changes, document syntax and lint checks, relevant isolated regression checks, and manual convergence/idempotence results from an Ubuntu 20.04 test system. Clearly identify checks that remain pending.
+CI validates the source without running remediation. Convergence, audit service behavior, reboot handling, and idempotence still require manual testing on an Ubuntu 20.04 system. Record completed checks and any pending test-system validation in each PR.
+
+To reproduce the Python-based checks with Python 3.12:
+
+```sh
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r .ci/requirements.txt
+ansible-galaxy collection install -r .ci/collections.yml
+yamllint --strict .
+ansible-playbook --syntax-check -i localhost, site.yml
+ansible-lint --offline site.yml
+```
+
+The CI workflow also validates its own syntax with actionlint; its version and checksum are recorded in the workflow. CI dependencies are pinned in `.ci/` and are separate from the role's runtime collection requirements. Commit signatures and sign-off are reviewed by maintainers.
+
+## Distribution
+
+Install this community role directly from [this Git repository](https://github.com/karlg100/UBUNTU20-STIG), selecting a reviewed commit or release. For example, use this role entry in an Ansible Galaxy requirements file, replacing `devel` with the commit or release you have validated:
+
+```yaml
+roles:
+  - name: ubuntu20_stig
+    src: https://github.com/karlg100/UBUNTU20-STIG.git
+    scm: git
+    version: devel
+```
+
+Run `ansible-galaxy role install -r requirements.yml`. The metadata identifies this fork as `karlg100.ubuntu20_stig`; that does not imply it has been published to Galaxy. The inherited automatic Galaxy publishing workflow has been removed. Any future Galaxy publication requires a verified community-owned namespace and an explicitly configured release process.
 
 ## Added Extras
 
