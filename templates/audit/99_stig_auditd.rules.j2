@@ -1,6 +1,6 @@
 ## This file is managed by Ansible, YOUR CHANGES WILL BE LOST!!
 
-# This template will set all of the auditd configurations via a handler in the role in one task instead of individually
+# This template sets the selected audit rules in one task.
 {% if ubtu_20_010100 %}
 -w /etc/passwd -p wa -k usergroup_modification
 {% endif %}

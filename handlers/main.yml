@@ -41,17 +41,6 @@
 - name: reload kernel system
   ansible.builtin.shell: sysctl --system
 
-- name: update auditd
-  ansible.builtin.template:
-      src: audit/99_stig_auditd.rules.j2
-      dest: /etc/audit/rules.d/99_stig_audit.rules
-      owner: root
-      group: root
-      mode: 0640
-  notify:
-      - reload auditd
-      - restart auditd
-
 - name: reload auditd
   ansible.builtin.shell: augenrules --load
 
