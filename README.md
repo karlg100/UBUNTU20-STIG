@@ -31,6 +31,12 @@ Full-role check mode is not supported and is not a substitute for testing remedi
 
 This role was developed against a clean install of the Ubuntu 20 operating system. If you are implementing to an existing system please review this role for any site specific changes that are needed.
 
+### Reboot handling
+
+`ubtu20_skip_reboot` defaults to `true`. After handlers finish, a normal role run checks Ubuntu's `/var/run/reboot-required` marker and the role's `/run/ubtu20stig-reboot-required` marker. It reboots only when a marker is present and automatic reboot is allowed. A skipped reboot produces an informational message without reporting a configuration change. Containers, chroots, and check mode never trigger an automatic reboot.
+
+The role records successful GRUB updates and deferred changes to an immutable running audit configuration in its own marker. The marker remains pending across repeat runs until reboot clears `/run`; the role does not remove Ubuntu's marker. Immutable audit rules are assembled on disk for the next boot, without attempting a live load or restart. An unchanged audit configuration does not create a reboot request. Tagged runs that omit post-processing can leave a pending marker for a later full run.
+
 Community fixes land in this fork's [devel branch](https://github.com/karlg100/UBUNTU20-STIG/tree/devel). See [releases](https://github.com/karlg100/UBUNTU20-STIG/releases) for published versions. Use a reviewed commit from this repository when pinning a deployment.
 
 ---

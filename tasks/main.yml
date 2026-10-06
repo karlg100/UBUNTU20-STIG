@@ -60,19 +60,8 @@
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
 
-- name: Reboot system
-  block:
-      - name: reboot system if not skipped
-        ansible.builtin.reboot:
-        when:
-            - not ubtu20_skip_reboot
-
-      - name: Warning a reboot required but skip option set
-        ansible.builtin.debug:
-            msg: "Warning!! changes have been made that require a reboot to be implemented but skip reboot was set - Can affect compliance check results"
-        changed_when: true
-        when:
-            - ubtu20_skip_reboot
+- name: Handle pending reboot
+  ansible.builtin.import_tasks: reboot.yml
 
 - name: If Warnings found Output count and control IDs affected
   ansible.builtin.debug:
