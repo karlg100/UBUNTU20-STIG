@@ -979,20 +979,24 @@
 - name: "MEDIUM | UBTU-20-010122 | PATCH | The Ubuntu operating system must be configured so that audit log files are not read or write-accessible by unauthorized users."
   block:
       - name: "MEDIUM | UBTU-20-010122 | AUDIT | The Ubuntu operating system must be configured so that audit log files are not read or write-accessible by unauthorized users. | Get File Permissions."
-        ansible.builtin.shell: find {{ ubtu_20_audit_log_path.stdout }} -type f -perm -600 ! -perm 600
+        ansible.builtin.find:
+            paths: "{{ ubtu_20_audit_log_path.stdout | trim }}"
+            file_type: file
+            recurse: true
+            hidden: true
         become: true
-        changed_when: false
-        failed_when: false
         register: ubtu_20_010122_audit_log_files_permissions_audit
 
-      - name: "MEDIUM | UBTU-20-010122 | PATCH | The Ubuntu operating system must be configured so that audit log files are not read or write-accessible by unauthorized users. | Adjust Aduit Log Files If Higher Then 0600."
+      - name: "MEDIUM | UBTU-20-010122 | PATCH | The Ubuntu operating system must be configured so that audit log files are not read or write-accessible by unauthorized users. | Restrict excessive audit log permissions."
         ansible.builtin.file:
-            path: "{{ item }}"
+            path: "{{ item.path }}"
             mode: "{{ ubtu20stig_audit_log_files_permissions }}"
-        with_items:
-            - "{{ ubtu_20_010122_audit_log_files_permissions_audit.stdout_lines }}"
+        loop: "{{ ubtu_20_010122_audit_log_files_permissions_audit.files }}"
+        loop_control:
+            label: "{{ item.path }}"
         when:
-            - ubtu_20_010122_audit_log_files_permissions_audit.stdout | length > 0
+            # Preserve modes containing only a subset of the allowed 0600 bits.
+            - item.mode not in ['0000', '0200', '0400', '0600']
   when:
       - ubtu_20_010122
   tags:
