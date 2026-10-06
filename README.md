@@ -31,6 +31,12 @@ Full-role check mode is not supported and is not a substitute for testing remedi
 
 This role was developed against a clean install of the Ubuntu 20 operating system. If you are implementing to an existing system please review this role for any site specific changes that are needed.
 
+### Reboot handling
+
+`ubtu20_skip_reboot` defaults to `true`. After handlers finish, a normal role run checks Ubuntu's `/var/run/reboot-required` marker and the role's `/run/ubtu20stig-reboot-required` marker. It reboots only when a marker is present and automatic reboot is allowed. A skipped reboot produces an informational message without reporting a configuration change. Containers, chroots, and check mode never trigger an automatic reboot.
+
+The role records successful GRUB updates and deferred changes to an immutable running audit configuration in its own marker. The marker remains pending across repeat runs until reboot clears `/run`; the role does not remove Ubuntu's marker. Immutable audit rules are assembled on disk for the next boot, without attempting a live load or restart. An unchanged audit configuration does not create a reboot request. Tagged runs that omit post-processing can leave a pending marker for a later full run.
+
 Community fixes land in this fork's [devel branch](https://github.com/karlg100/UBUNTU20-STIG/tree/devel). See [releases](https://github.com/karlg100/UBUNTU20-STIG/releases) for published versions. Use a reviewed commit from this repository when pinning a deployment.
 
 ---
@@ -71,6 +77,16 @@ Review the tasks and site-specific settings before applying the role. Authentica
 ## Role Variables
 
 Use [defaults/main.yml](defaults/main.yml) as the configuration reference. Override values in inventory, `group_vars`, `host_vars`, or play variables so deployment settings stay separate from role source changes. Review individual control switches as well as the category switches; enabling a category does not make every control automatic. `ubtu20stig_disruption_high` defaults to `false` and enables tasks gated by that setting when changed to `true`.
+
+### APT cache freshness
+
+`ubtu20stig_apt_cache_valid_time` is the maximum age of cached APT metadata in seconds. It defaults to `7200` (two hours), matching the freshness interval used by the Ubuntu 22.04 and 24.04 roles. Set a non-negative integer; `0` requests a refresh on every run. The role preserves the APT module's change and failure reporting, so an expired cache can legitimately report a change and repository/signature errors still fail.
+
+### Audit log ownership
+
+`ubtu_20_010124` enforces the V1R7 STIG's root group policy: it sets one active `log_group = root` declaration in `/etc/audit/auditd.conf` and sets the configured audit log directory and its regular log files to group `root`. Configuration changes notify a SIGHUP reload of auditd. This daemon configuration reload is independent of kernel audit rule loading and does not require a reboot when the rules are immutable.
+
+`ubtu_20_010123` separately controls file owner remediation. Disabling either control leaves that control's settings alone. With `ubtu_20_010122` also enabled, excessive log permissions are restricted while already compliant modes, including rotated logs at `0400`, are preserved. Validate ownership and permissions after daemon reload and log rotation on a test system, then repeat the role with the same inputs.
 
 ## Tags
 

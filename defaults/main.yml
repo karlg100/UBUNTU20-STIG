@@ -2,6 +2,9 @@
 
 ubtu20stig_report_dir: /tmp
 
+# Reuse APT metadata for this many seconds; 0 refreshes on every run.
+ubtu20stig_apt_cache_valid_time: 7200
+
 ubtu20stig_cat1_patch: true
 ubtu20stig_cat2_patch: true
 ubtu20stig_cat3_patch: true
@@ -27,6 +30,7 @@ ubtu20stig_audit_disruptive: false
 
 ubtu20stig_skip_for_travis: false
 
+# Warn instead of automatically rebooting when an OS or role reboot marker is present.
 ubtu20_skip_reboot: true
 
 ubtu20stig_workaround_for_disa_benchmark: true

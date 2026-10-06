@@ -979,20 +979,24 @@
 - name: "MEDIUM | UBTU-20-010122 | PATCH | The Ubuntu operating system must be configured so that audit log files are not read or write-accessible by unauthorized users."
   block:
       - name: "MEDIUM | UBTU-20-010122 | AUDIT | The Ubuntu operating system must be configured so that audit log files are not read or write-accessible by unauthorized users. | Get File Permissions."
-        ansible.builtin.shell: find {{ ubtu_20_audit_log_path.stdout }} -type f -perm -600 ! -perm 600
+        ansible.builtin.find:
+            paths: "{{ ubtu_20_audit_log_path.stdout | trim }}"
+            file_type: file
+            recurse: true
+            hidden: true
         become: true
-        changed_when: false
-        failed_when: false
         register: ubtu_20_010122_audit_log_files_permissions_audit
 
-      - name: "MEDIUM | UBTU-20-010122 | PATCH | The Ubuntu operating system must be configured so that audit log files are not read or write-accessible by unauthorized users. | Adjust Aduit Log Files If Higher Then 0600."
+      - name: "MEDIUM | UBTU-20-010122 | PATCH | The Ubuntu operating system must be configured so that audit log files are not read or write-accessible by unauthorized users. | Restrict excessive audit log permissions."
         ansible.builtin.file:
-            path: "{{ item }}"
+            path: "{{ item.path }}"
             mode: "{{ ubtu20stig_audit_log_files_permissions }}"
-        with_items:
-            - "{{ ubtu_20_010122_audit_log_files_permissions_audit.stdout_lines }}"
+        loop: "{{ ubtu_20_010122_audit_log_files_permissions_audit.files }}"
+        loop_control:
+            label: "{{ item.path }}"
         when:
-            - ubtu_20_010122_audit_log_files_permissions_audit.stdout | length > 0
+            # Preserve modes containing only a subset of the allowed 0600 bits.
+            - item.mode not in ['0000', '0200', '0400', '0600']
   when:
       - ubtu_20_010122
   tags:
@@ -1006,43 +1010,85 @@
       - auditd
       - logs
 
-- name: |
-    "MEDIUM | UBTU-20-010123 | PATCH | The Ubuntu operating system must be configured to permit only authorized users ownership of the audit log files."
-    "MEDIUM | UBTU-20-010124 | PATCH | The Ubuntu operating system must permit only authorized groups ownership of the audit log files."
+- name: "MEDIUM | UBTU-20-010123 | PATCH | The Ubuntu operating system must be configured to permit only authorized users ownership of the audit log files."
   block:
-      - name: |
-          "MEDIUM | UBTU-20-010123 | AUDIT | The Ubuntu operating system must be configured to permit only authorized users ownership of the audit log files. | Find Files."
-          "MEDIUM | UBTU-20-010124 | AUDIT | The Ubuntu operating system must permit only authorized groups ownership of the audit log files. | Find Files."
-        ansible.builtin.shell: find {{ ubtu_20_audit_log_path.stdout }} -type f ! -user root -o -type f ! -group root
+      - name: "MEDIUM | UBTU-20-010123 | AUDIT | Find audit log files."
+        ansible.builtin.find:
+            paths: "{{ ubtu_20_audit_log_path.stdout | trim }}"
+            file_type: file
+            recurse: true
+            hidden: true
         become: true
-        changed_when: false
-        failed_when: false
-        register: ubtu_20_010123_audit_log_files_root_permissions_audit
+        register: ubtu_20_010123_audit_log_files
 
-      - name: |
-          "MEDIUM | UBTU-20-010123 | PATCH | The Ubuntu operating system must be configured to permit only authorized users ownership of the audit log files. | Set Permissions."
-          "MEDIUM | UBTU-20-010124 | PATCH | The Ubuntu operating system must permit only authorized groups ownership of the audit log files. | Set Permissions."
+      - name: "MEDIUM | UBTU-20-010123 | PATCH | Set audit log file ownership."
         ansible.builtin.file:
-            path: "{{ item }}"
-            owner: "{{ ubtu_20_010123 | ternary('root',omit) }}"
-            group: "{{ ubtu_20_010124 | ternary('root',omit) }}"
-        with_items:
-            - "{{ ubtu_20_010123_audit_log_files_root_permissions_audit.stdout_lines }}"
-        when:
-            - ubtu_20_010123_audit_log_files_root_permissions_audit.stdout | length > 0
+            path: "{{ item.path }}"
+            owner: root
+        loop: "{{ ubtu_20_010123_audit_log_files.files }}"
+        loop_control:
+            label: "{{ item.path }}"
   when:
-      - ubtu_20_010123 or
-        ubtu_20_010124
+      - ubtu_20_010123
   tags:
       - UBTU-20-010123
-      - UBTU-20-010124
       - CAT2
       - CCI-000162
       - CCI-000163
       - SRG-OS-000057-GPOS-00027
       - SV-238246r653913_rule
-      - SV-238247r832947_rule
       - V-238246
+      - auditd
+      - logs
+
+- name: "MEDIUM | UBTU-20-010124 | PATCH | The Ubuntu operating system must permit only authorized groups ownership of the audit log files."
+  block:
+      - name: "MEDIUM | UBTU-20-010124 | PATCH | Remove duplicate audit log group settings."
+        # Keep the final active declaration for lineinfile to normalize.
+        ansible.builtin.replace:
+            path: /etc/audit/auditd.conf
+            regexp: '(?im)^[ \t]*log_group[ \t]*=.*\n(?=[\s\S]*^[ \t]*log_group[ \t]*=)'
+            replace: ''
+        notify: reload auditd configuration
+
+      - name: "MEDIUM | UBTU-20-010124 | PATCH | Configure auditd to use the root group."
+        ansible.builtin.lineinfile:
+            path: /etc/audit/auditd.conf
+            regexp: '(?i)^[ \t]*log_group[ \t]*='
+            line: log_group = root
+        notify: reload auditd configuration
+
+      - name: "MEDIUM | UBTU-20-010124 | PATCH | Set audit log directory group ownership."
+        ansible.builtin.file:
+            path: "{{ ubtu_20_audit_log_path.stdout | trim }}"
+            state: directory
+            group: root
+
+      - name: "MEDIUM | UBTU-20-010124 | AUDIT | Find audit log files."
+        ansible.builtin.find:
+            paths: "{{ ubtu_20_audit_log_path.stdout | trim }}"
+            file_type: file
+            recurse: true
+            hidden: true
+        become: true
+        register: ubtu_20_010124_audit_log_files
+
+      - name: "MEDIUM | UBTU-20-010124 | PATCH | Set audit log file group ownership."
+        ansible.builtin.file:
+            path: "{{ item.path }}"
+            group: root
+        loop: "{{ ubtu_20_010124_audit_log_files.files }}"
+        loop_control:
+            label: "{{ item.path }}"
+  when:
+      - ubtu_20_010124
+  tags:
+      - UBTU-20-010124
+      - CAT2
+      - CCI-000162
+      - CCI-000163
+      - SRG-OS-000057-GPOS-00027
+      - SV-238247r832947_rule
       - V-238247
       - auditd
       - logs
