@@ -2,6 +2,9 @@
 
 ubtu20stig_report_dir: /tmp
 
+# Reuse APT metadata for this many seconds; 0 refreshes on every run.
+ubtu20stig_apt_cache_valid_time: 7200
+
 ubtu20stig_cat1_patch: true
 ubtu20stig_cat2_patch: true
 ubtu20stig_cat3_patch: true

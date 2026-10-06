@@ -9,6 +9,7 @@
 - name: "PRELIM | Run apt update"
   ansible.builtin.apt:
       update_cache: true
+      cache_valid_time: "{{ ubtu20stig_apt_cache_valid_time }}"
 
 - name: "PRELIM | UBTU-20-010002 | gdm3 setup"
   ansible.builtin.package:

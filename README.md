@@ -72,6 +72,10 @@ Review the tasks and site-specific settings before applying the role. Authentica
 
 Use [defaults/main.yml](defaults/main.yml) as the configuration reference. Override values in inventory, `group_vars`, `host_vars`, or play variables so deployment settings stay separate from role source changes. Review individual control switches as well as the category switches; enabling a category does not make every control automatic. `ubtu20stig_disruption_high` defaults to `false` and enables tasks gated by that setting when changed to `true`.
 
+### APT cache freshness
+
+`ubtu20stig_apt_cache_valid_time` is the maximum age of cached APT metadata in seconds. It defaults to `7200` (two hours), matching the freshness interval used by the Ubuntu 22.04 and 24.04 roles. Set a non-negative integer; `0` requests a refresh on every run. The role preserves the APT module's change and failure reporting, so an expired cache can legitimately report a change and repository/signature errors still fail.
+
 ## Tags
 
 Control tasks carry tags for STIG identifiers, severity, and the affected system component. Tags are case-sensitive and do not override task conditions. Use `ansible-playbook --list-tasks --tags <tag> -i <inventory> site.yml` to inspect the selected tasks before execution.
