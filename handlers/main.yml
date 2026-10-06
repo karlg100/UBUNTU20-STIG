@@ -2,6 +2,7 @@
 
 - name: update grub
   ansible.builtin.command: update-grub
+  notify: mark reboot required
   when:
       - not ubtu20stig_skip_for_travis
       - not ubtu20stig_system_is_container
@@ -26,28 +27,43 @@
       name: chrony
       state: restarted
 
-- name: auditd_immutable_check
-  ansible.builtin.shell: grep -c "^-e 2" /etc/audit/rules.d/99_auditd.rules
+- name: Check running audit rule mutability
+  ansible.builtin.command: auditctl -s
   changed_when: false
-  register: auditd_immutable_check
+  check_mode: false
+  register: ubtu20stig_audit_status
+  listen:
+      - reload auditd
+      - restart auditd
 
-- name: audit_immutable_fact
-  ansible.builtin.debug:
-      msg: "Reboot required for auditd to apply new rules as immutable set"
-  notify: change_requires_reboot
+- name: Mark deferred immutable audit changes for reboot
+  ansible.builtin.file:
+      path: /run/ubtu20stig-reboot-required
+      state: touch
+      owner: root
+      group: root
+      mode: '0600'
+      access_time: preserve
+      modification_time: preserve
   when:
-      - auditd_immutable_check.stdout == '1'
+      - ubtu20stig_audit_status.stdout is search('(?m)^enabled\s+2\s*$')
+  listen:
+      - reload auditd
+      - restart auditd
 
 - name: reload kernel system
   ansible.builtin.shell: sysctl --system
 
 - name: reload auditd
-  ansible.builtin.shell: augenrules --load
+  # Immutable rules can only be activated after reboot; still build the disk rules.
+  ansible.builtin.command: "{{ (ubtu20stig_audit_status.stdout is search('(?m)^enabled\\s+2\\s*$')) | ternary('augenrules', 'augenrules --load') }}"
 
 - name: restart auditd
   ansible.builtin.service:
       name: auditd
       state: restarted
+  when:
+      - ubtu20stig_audit_status.stdout is not search('(?m)^enabled\s+2\s*$')
 
 - name: restart rsyslog
   ansible.builtin.service:
@@ -60,3 +76,13 @@
       value: '1'
       sysctl_set: true
   when: ansible_virtualization_type != "docker"
+
+- name: mark reboot required
+  ansible.builtin.file:
+      path: /run/ubtu20stig-reboot-required
+      state: touch
+      owner: root
+      group: root
+      mode: '0600'
+      access_time: preserve
+      modification_time: preserve

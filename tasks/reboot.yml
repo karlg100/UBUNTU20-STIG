@@ -1,0 +1,30 @@
+---
+
+- name: Check pending reboot markers
+  ansible.builtin.stat:
+      path: "{{ item }}"
+      get_checksum: false
+      get_mime: false
+      get_attributes: false
+  loop:
+      - /var/run/reboot-required
+      - /run/ubtu20stig-reboot-required
+  register: ubtu20stig_reboot_markers
+
+- name: Handle required reboot
+  block:
+      - name: Reboot system when permitted
+        ansible.builtin.reboot:
+        when:
+            - not ubtu20_skip_reboot
+            - not ubtu20stig_system_is_container
+            - not ubtu20stig_system_is_chroot
+            - not ansible_check_mode
+
+      - name: Report required reboot when automatic reboot is skipped
+        ansible.builtin.debug:
+            msg: "A reboot is required to apply pending system changes; automatic reboot was skipped."
+        when:
+            - ubtu20_skip_reboot or ubtu20stig_system_is_container or ubtu20stig_system_is_chroot or ansible_check_mode
+  when:
+      - ubtu20stig_reboot_markers.results | selectattr('stat.exists') | list | length > 0
