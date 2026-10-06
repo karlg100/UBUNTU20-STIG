@@ -65,6 +65,16 @@
   when:
       - ubtu20stig_audit_status.stdout is not search('(?m)^enabled\s+2\s*$')
 
+- name: reload auditd configuration
+  # Daemon settings can be reloaded even when kernel audit rules are immutable.
+  ansible.builtin.command:
+      argv:
+          - systemctl
+          - kill
+          - --kill-who=main
+          - --signal=SIGHUP
+          - auditd.service
+
 - name: restart rsyslog
   ansible.builtin.service:
       name: rsyslog

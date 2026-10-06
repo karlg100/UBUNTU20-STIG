@@ -82,6 +82,12 @@ Use [defaults/main.yml](defaults/main.yml) as the configuration reference. Overr
 
 `ubtu20stig_apt_cache_valid_time` is the maximum age of cached APT metadata in seconds. It defaults to `7200` (two hours), matching the freshness interval used by the Ubuntu 22.04 and 24.04 roles. Set a non-negative integer; `0` requests a refresh on every run. The role preserves the APT module's change and failure reporting, so an expired cache can legitimately report a change and repository/signature errors still fail.
 
+### Audit log ownership
+
+`ubtu_20_010124` enforces the V1R7 STIG's root group policy: it sets one active `log_group = root` declaration in `/etc/audit/auditd.conf` and sets the configured audit log directory and its regular log files to group `root`. Configuration changes notify a SIGHUP reload of auditd. This daemon configuration reload is independent of kernel audit rule loading and does not require a reboot when the rules are immutable.
+
+`ubtu_20_010123` separately controls file owner remediation. Disabling either control leaves that control's settings alone. With `ubtu_20_010122` also enabled, excessive log permissions are restricted while already compliant modes, including rotated logs at `0400`, are preserved. Validate ownership and permissions after daemon reload and log rotation on a test system, then repeat the role with the same inputs.
+
 ## Tags
 
 Control tasks carry tags for STIG identifiers, severity, and the affected system component. Tags are case-sensitive and do not override task conditions. Use `ansible-playbook --list-tasks --tags <tag> -i <inventory> site.yml` to inspect the selected tasks before execution.
