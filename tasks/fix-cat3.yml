@@ -193,6 +193,8 @@
         ansible.builtin.command:
             cmd: /usr/sbin/pam-auth-update --package --enable faillockpost --force
         when: "'sufficient pam_faillock.so authsucc' not in common_auth_file.content | b64decode"
+  when:
+      - ubtu_20_010072
   tags:
       - pam
       - pamd
