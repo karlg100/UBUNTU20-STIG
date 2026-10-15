@@ -30,8 +30,11 @@ explain configuration changes that existing deployments will need.
 Validation
 ----------
 The community CI workflow runs YAML lint, GitHub Actions validation, Ansible
-syntax checks, and Ansible lint on GitHub-hosted runners. It uses read-only
-repository permissions and does not run remediation or provision test systems.
+syntax checks, and Ansible lint on GitHub-hosted runners. It also exercises the
+faillock control in a disposable Ubuntu 20.04 container using stock PAM tooling.
+It uses read-only repository permissions; remediation runs only in that isolated
+container, with no host mounts. These tests do not establish full-role or login
+and lockout acceptance.
 
 Commit signatures and sign-off are reviewed by maintainers; the workflow does
 not claim to enforce them. Functional convergence and idempotence must be

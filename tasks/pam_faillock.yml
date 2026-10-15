@@ -1,0 +1,10 @@
+---
+- name: "LOW | UBTU-20-010072 | Reconcile faillock profile ownership"
+  ubtu20_pam_faillock:
+      manage: "{{ ubtu_20_010072 }}"
+      migrate_to: "{{ ubtu20stig_faillock_migrate_to_profiles }}"
+      role_profiles:
+          faillockpre: "{{ lookup('ansible.builtin.template', 'pam-configs/pam-configs-profile-faillockpre.j2') }}"
+          faillockmain: "{{ lookup('ansible.builtin.template', 'pam-configs/pam-configs-profile-faillockmain.j2') }}"
+          faillockpost: "{{ lookup('ansible.builtin.template', 'pam-configs/pam-configs-profile-faillockpost.j2') }}"
+  when: ubtu_20_010072 or ubtu20stig_faillock_migrate_to_profiles | length > 0

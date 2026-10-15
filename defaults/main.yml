@@ -557,6 +557,11 @@ ubtu20stig_pamd_remember:
     rounds: 5000
 
 # UBTU-20-010072
+# Explicit opt-in migration to an already selected external faillock profile set.
+# Requires ubtu_20_010072: false. Empty preserves disabled-control no-op behavior.
+# See README before using; only unchanged legacy role profiles are retired.
+ubtu20stig_faillock_migrate_to_profiles: []
+
 # ubtu20stig_pamd_failock_authfail are the pam.d placement settings and value for failed login attempts
 # The settings, type, control, module_path, and state need to correspond to an existing rule in /etc/pam.d/common-auth, which is used
 # as a reference in adding the [default=die] pam_faillock.so values if [default=die] pam_faillock.so do not already exist.
