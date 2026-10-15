@@ -57,3 +57,45 @@ jobs:
 
       - name: Lint the role
         run: ansible-lint --offline site.yml
+
+  native-pam-tests:
+    name: Stock Ubuntu 20.04 PAM regression tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      ANSIBLE_COLLECTIONS_PATH: ${{ github.workspace }}/.ansible/collections
+      ANSIBLE_LOCAL_TEMP: ${{ github.workspace }}/.ansible/tmp
+    steps:
+      - name: Check out the proposed change
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install the test controller and collections
+        run: |
+          python -m pip install -r .ci/requirements.txt
+          ansible-galaxy collection install -r .ci/collections.yml
+
+      - name: Prepare disposable Focal container
+        run: |
+          docker run --detach --platform linux/amd64 --name stig-pam-tests \
+            --label codex.task=ubuntu20-pam-issue16 \
+            ubuntu:20.04@sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214 \
+            sleep infinity
+          docker exec --env DEBIAN_FRONTEND=noninteractive stig-pam-tests \
+            apt-get -o Acquire::Retries=3 update -qq
+          docker exec --env DEBIAN_FRONTEND=noninteractive stig-pam-tests \
+            apt-get -o Acquire::Retries=3 install --yes --no-install-recommends \
+            python3 libpam-runtime libpam-modules
+
+      - name: Exercise the actual control with stock PAM tooling
+        run: python tests/pam/test_faillock.py --container stig-pam-tests
+
+      - name: Remove disposable test container
+        if: always()
+        run: docker rm --force stig-pam-tests || true

@@ -88,6 +88,61 @@ Use [defaults/main.yml](defaults/main.yml) as the configuration reference. Overr
 
 `ubtu_20_010123` separately controls file owner remediation. Disabling either control leaves that control's settings alone. With `ubtu_20_010122` also enabled, excessive log permissions are restricted while already compliant modes, including rotated logs at `0400`, are preserved. Validate ownership and permissions after daemon reload and log rotation on a test system, then repeat the role with the same inputs.
 
+### PAM faillock ownership and legacy migration
+
+With `ubtu_20_010072: true`, the role owns the `faillockpre`, `faillockmain`, and
+`faillockpost` profiles as one family. It selects all three with stock
+`pam-auth-update`, using selected-profile names and cached provenance instead of
+searching for literal generated lines. A competing selected faillock family is
+an error; the role does not assume that another profile's `requisite` control
+has the same behavior as its own `required` control.
+
+With `ubtu_20_010072: false` and the default empty migration list, the control
+does no work, including on systems retaining legacy selections. Disabling a
+control alone does not establish that another working lockout stack exists.
+
+For an explicit migration, first install, select, and verify the replacement
+profiles through their owning role. Then disable this control and name that
+complete, already selected family, for example:
+
+```yaml
+ubtu_20_010072: false
+ubtu20stig_faillock_migrate_to_profiles:
+  - faillock-preauth
+  - faillock
+  - faillock-resetcounter
+```
+
+Those names are examples; use the actual profiles in your deployment. The list
+is an explicit migration request, not an instruction to install or activate
+external profiles. Keep CAT III processing enabled and select the
+`UBTU-20-010072` tag when targeting this migration. It must not be combined with
+an enabled `ubtu_20_010072` control.
+
+The migration requires exactly one retained `preauth`, `authfail`, and `authsucc`
+authentication entry. Supported external controls are `required` or `requisite`
+for preauth, `[default=die]` for authfail, and `sufficient` for authsucc, with
+preauth before and authfail after the other Primary authentication entries,
+and authsucc in the Additional block. Choosing the external owner explicitly retains its control flags and
+options; it does not convert or certify their authentication semantics. Other
+layouts require review rather than automatic migration. The external owner is
+responsible for its policy settings and authentication acceptance.
+
+After validating the definitions, selections, cache, and generated faillock
+entries, the role uses Focal's `--remove` to retire only its three unchanged
+legacy profiles, then removes those definitions. Unrelated and retained profiles
+are preserved. Customized legacy profiles, incomplete targets, mismatched
+provenance, unseen default profiles, and conflicting declarations cause a
+failure requiring review. Regeneration never uses `--force` or the nonstandard
+`--disable` extension. A failed/refused regeneration restores the affected PAM
+files, profile definitions, and selection values. Check mode validates and
+predicts changes without applying them.
+
+Review the generated stack and test the deployment's actual login and lockout
+behavior in a disposable system before applying the migration to real hosts.
+The [native regression tests](tests/pam/README.md) verify generation and
+idempotence, not login acceptance.
+
 ## Tags
 
 Control tasks carry tags for STIG identifiers, severity, and the affected system component. Tags are case-sensitive and do not override task conditions. Use `ansible-playbook --list-tasks --tags <tag> -i <inventory> site.yml` to inspect the selected tasks before execution.
@@ -118,7 +173,7 @@ Contributions to this community fork are welcome. See [CONTRIBUTING.rst](CONTRIB
 
 [Community CI](.github/workflows/ci.yml) runs on pull requests and pushes to `devel` and `main`, and can be started manually. It runs YAML lint (including workflows), GitHub Actions validation with actionlint, an Ansible syntax check, and Ansible lint on a GitHub-hosted Ubuntu runner. It uses read-only repository permissions and requires no AWS credentials, private infrastructure repository, or self-hosted runner.
 
-CI validates the source without running remediation. Convergence, audit service behavior, reboot handling, and idempotence still require manual testing on an Ubuntu 20.04 system. Record completed checks and any pending test-system validation in each PR.
+CI also exercises UBTU-20-010072 with stock Ubuntu 20.04 PAM tooling in a disposable Docker container. It tests profile ownership, explicit legacy migration, selection preservation, regenerated-stack stability, failure handling, and repeated Ansible execution. See [the native PAM tests](tests/pam/README.md). It does not run the full role, test login/lockout behavior, or establish production acceptance. Full-role convergence, audit service behavior, and reboot handling still require representative Ubuntu 20.04 system testing.
 
 From the repository root, reproduce the Python-based checks with Python 3.12:
 
