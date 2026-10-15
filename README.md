@@ -193,14 +193,14 @@ The CI workflow also validates its own syntax with actionlint; its version and c
 
 ## Distribution
 
-Install this community role directly from [this Git repository](https://github.com/karlg100/UBUNTU20-STIG), selecting a reviewed commit or release. For example, use this role entry in an Ansible Galaxy requirements file, replacing `devel` with the commit or release you have validated:
+Install this community role directly from [this Git repository](https://github.com/karlg100/UBUNTU20-STIG), selecting a reviewed commit or release. Role versions are identified by Git tags and are separate from the DISA benchmark revision. For example, this Ansible Galaxy requirements entry pins the first community release:
 
 ```yaml
 roles:
   - name: ubuntu20_stig
     src: https://github.com/karlg100/UBUNTU20-STIG.git
     scm: git
-    version: devel
+    version: "1.2.0"
 ```
 
 Run `ansible-galaxy role install -r requirements.yml`. Install the required collections separately; see the official [collection installation guide](https://docs.ansible.com/projects/ansible/latest/collections_guide/collections_installing.html). From a checkout of this role, the inherited collection manifest can be installed with:
